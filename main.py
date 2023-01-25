@@ -8,7 +8,7 @@ access_token_secret = '40xcsiz3D7sWudoqM3FITovMs4KID5yfBUvWsNLv7KI78'
 
 Client = tweepy.Client(bearer_token,consumer_key, consumer_secret, access_token, access_token_secret)
  
-response = Client.search_recent_tweets(query='BBB23',max_results=100)
+response = Client.search_recent_tweets(query='BBB23',max_results=50)
 response = response.data
 
 for x in response:
