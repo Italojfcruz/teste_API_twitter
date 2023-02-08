@@ -1,14 +1,16 @@
 import requests
 import pandas as pd
 import tweepy as tw
+from unidecode import unidecode
+import re
 #from google.cloud import storage
 from bs4 import BeautifulSoup
 import urllib.request, urllib.error, urllib.parse
 from selenium.webdriver.common.by import By
 from selenium import webdriver
 import time
-
 driver = webdriver.Chrome('--headless')
+
 
 #credenciais
 bearer_token        ='AAAAAAAAAAAAAAAAAAAAAJVblQEAAAAA8TqsBNhMkEPAcc0CDIGuUFEvhDU%3DP0BFUPVWhp3tf4OshAXQBGywj0J1e5XpTWnB4vS971qExhFNcl'
@@ -88,8 +90,132 @@ class ApiTwitter():
 
         return tags_tw.text
         #print("Instagram: ",tags_inst)
+    def twitter_quotes(dataframe):
+        regex_names = ['aline',
+                        'bruna|bruna griphao',
+                        'fred',
+                        'domitila',
+                        'sapato|cara de sapato',
+                        'fred nicacio',
+                        'key|key alves',
+                        'Marvvila',
+                        'gabriel santana|mosca',
+                        'mc guime|guime',
+                        'paula',
+                        'gabriel',
+                        'cezar',
+                        'gustavo|cowboy',
+                        'larissa|lari',
+                        'ricardo',
+                        'sarah aline|sarah',
+                        'marilia',
+                        'cristian',
+                        'bruno',
+                        'tina',
+                        'amanda'
+                        ]
         
-        
+        sapato = 0
+        fred   = 0
+        nicacio = 0
+        aline  = 0
+        bruna  = 0
+        gabriel = 0
+        domitila =0
+        key = 0
+        marvvila = 0
+        guime = 0
+        paula=0
+        cezar = 0
+        gustavo = 0
+        larissa = 0
+        ricardo = 0
+        sarah = 0
+        marilia = 0
+        cristian = 0
+        bruno = 0
+        tina  = 0
+        amanda = 0
+
+        dataframe = dataframe['text']
+        for menssage in dataframe:
+            for reg in regex_names:
+                match = re.search(reg,unidecode(menssage).lower())
+                if match:
+                    if match.group(0) == 'sapato':
+                        sapato+=1
+                    if match.group(0) == 'fred nicacio':
+                        nicacio+=1
+                    if match.group(0) == 'fred':
+                        fred+=1 
+                    if match.group(0) == 'bruna' or match.group(0) == 'bruna griphao':
+                        bruna+=1
+                    if match.group(0) == 'domitila':
+                        domitila+=1
+                    if match.group(0) == 'key':
+                        key+=1
+                    if match.group(0) == 'marvilla':
+                        marvvila+=1
+                    if match.group(0) == 'mc guime' or match.group(0) == 'guime':
+                        guime+=1
+                    if match.group(0) == 'gabriel santana' or match.group(0) == 'mosca':
+                        gabriel+=1    
+                    if match.group(0) == 'aline':
+                        aline+=1 
+                    if match.group(0) == 'paula':
+                        paula+=1
+                    if match.group(0) == 'cezar':
+                        cezar+=1
+                    if match.group(0) == 'gustavo' or match.group(0) == 'cowboy':
+                        gustavo+=1
+                    if match.group(0) == 'larissa':
+                        larissa+=1
+                    if match.group(0) == 'ricardo':
+                        ricardo+=1
+                    if match.group(0) == 'sarah':
+                        sarah+=1
+                    if match.group(0) == 'marilia':
+                        marilia+=1
+                    if match.group(0) == 'cristian':
+                        cristian+=1
+                    if match.group(0) == 'bruno':
+                        bruno+=1
+                    if match.group(0) == 'tina':
+                        tina+=1
+                    if match.group(0) == 'amanda':
+                        amanda+=1
+     
+        quotes = {
+                    'Sapato':sapato,            
+                    'Fred':fred, 
+                    'nicacio':nicacio,            
+                    'bruna':bruna,
+                    'Domitila':domitila,            
+                    'Key':key,
+                    'Marvvila':marvvila,            
+                    'Mc Guime':guime,
+                    'Gabriel':gabriel,
+                    'paula':paula,            
+                    'cezar': cezar, 
+                    'gustavo': gustavo,            
+                    'larissa':larissa,
+                    'ricardo':ricardo,            
+                    'sarah':sarah,
+                    'marilia':marilia,            
+                    'cristian':cristian,
+                    'bruno':bruno,
+                    'tina':tina,
+                    'amanda':amanda
+                }
+        dataframe = pd.DataFrame([quotes]).transpose()
+        dataframe.columns = ['quotes']
+        dataframe = dataframe.sort_values(by='quotes',ascending=False)
+        return dataframe
+
+
+
+
+
 class Files:
     def __init__(self) -> None:
         pass
