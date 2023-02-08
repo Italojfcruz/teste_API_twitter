@@ -1,17 +1,14 @@
 import requests
 import pandas as pd
 import tweepy as tw
-from google.cloud import storage
+#from google.cloud import storage
 from bs4 import BeautifulSoup
 import urllib.request, urllib.error, urllib.parse
 from selenium.webdriver.common.by import By
 from selenium import webdriver
 import time
 
-driver = webdriver.Chrome()
-
-
-
+driver = webdriver.Chrome('--headless')
 
 #credenciais
 bearer_token        ='AAAAAAAAAAAAAAAAAAAAAJVblQEAAAAA8TqsBNhMkEPAcc0CDIGuUFEvhDU%3DP0BFUPVWhp3tf4OshAXQBGywj0J1e5XpTWnB4vS971qExhFNcl'
@@ -33,7 +30,7 @@ class ApiTwitter():
         response = response['data']
         dataset_BBB23 = pd.DataFrame(response)
         print(dataset_BBB23)
-        #dataset_BBB23.to_excel('dados_BBB23.xlsx')
+        dataset_BBB23.to_excel('dados_BBB23.xlsx')
             
     def tw_get_twitter_recents():
         Client = tw.Client(bearer_token,consumer_key, consumer_secret, access_token, access_token_secret)
@@ -46,14 +43,17 @@ class ApiTwitter():
         url_twitter   ='https://twitter.com/'+ user 
         url_instagram ='https://www.instagram.com/fred/'
         response = requests.get(url_twitter)
+       
+        soup = BeautifulSoup(response.text, 'html.parser')
         
-        html_page = response.text
         
-        soup = BeautifulSoup(html_page, 'html.parser')
-        
-
+        '''
+        file = open('texto.html','a',encoding="utf-8")
+        file.write(response)
+        '''
         '''
         elementos intagram
+        
         <span class="_ac2a _ac2b" title="10.476.640"><span>10,4&nbsp;mi</span></span>
         
         <div class="_aacl _aaco _aacu _aacy _aad6 _aadb _aade"><span class="_ac2a _ac2b" title="10.476.640"><span>10,4&nbsp;mi</span></span> seguidores</div>
@@ -76,19 +76,19 @@ class ApiTwitter():
 
         #div = soup.find_all("span",{"class":"_acan _acao _acat _aj1-"}) #instagram
         div = soup.find_all("span",{"class":"css-901oao css-16my406 r-poiln3 r-bcqeeo r-qvutc0"})#twitter
+       
         
         driver.get(url_twitter)
-        time.sleep(5)
+        time.sleep(2)
         tags_tw   = driver.find_element(By.XPATH,'//*[@id="react-root"]/div/div/div[2]/main/div/div/div/div/div/div[3]/div/div/div/div/div[5]/div[2]/a/span[1]')
         
         #driver.get(url_instagram)
         #time.sleep(10)
         #tags_inst = driver.find_element(By.XPATH,'//*[@id="mount_0_0_tF"]/div/div/div/div[1]/div/div/div/div[1]/section/main/div/header/section/ul/li[2]/button/div')
 
-        print("twitter: ",tags_tw.text)
+        return tags_tw.text
         #print("Instagram: ",tags_inst)
-        #file = open('texto.html','a')
-        #file.write(div)
+        
         
 class Files:
     def __init__(self) -> None:
@@ -100,8 +100,9 @@ class Files:
         file= open('/var/lib/docker/volumes/datas_api/datas.txt','a') 
         file.write(data)
         
-
+'''
 class CloudGcp:
+
     def __init__(self) -> None:
         pass    
     def load_data():
@@ -126,3 +127,5 @@ class CloudGcp:
         print(
             f"{destination_blob_name} with contents {contents} uploaded to {bucket_name}."
         )
+
+'''        
