@@ -3,7 +3,7 @@ import pandas as pd
 import tweepy as tw
 import re
 import time
-
+from datetime import datetime,timedelta 
 from unidecode                            import unidecode
 from selenium                             import webdriver
 from selenium.webdriver.support.ui        import WebDriverWait
@@ -11,7 +11,11 @@ from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.common.by         import By
 from selenium.common.exceptions           import SessionNotCreatedException
 from selenium.webdriver.support           import expected_conditions
-
+import random 
+import logging
+import boto3
+from botocore.exceptions import ClientError
+import os
 
 class ApiTwitter():
     def __init__(self) -> None:
@@ -24,29 +28,29 @@ class ApiTwitter():
          
     def get_twitter_recents(self):
         token=None
-        twitters = []
-        url      = f'https://api.twitter.com/2/tweets/search/recent?query=BBB23&max_results=10'
+        day_1 = (datetime.now()- timedelta(days=1))
+        day_1 = day_1.strftime("%Y-%m-%d %H:%M:%S")
+
+        url      = f'https://api.twitter.com/2/tweets/search/recent?query=BBB23&max_results=100&tweet.fields=created_at'
         headers  = {'Authorization':'Bearer '+ self.bearer_token}
         response = requests.get(url,headers=headers).json() 
-        twitters.append(response['data'])
+
+        twitters = response['data']
+        
         token = response['meta'].get('next_token')
-    
+      
         if token:
-            for i in range(1):
+            for i in range(10):
                 if token:
-                   
                     response = requests.get(f'{url}&next_token={token}' ,headers=headers).json()
-                    twitters.append(response['data'])
+                    twitters.extend(response['data'])
                     token = response['meta'].get('next_token')
-        #print(twitters)
-    
-    
+                    response = {}
         
         dataset_BBB23 = pd.DataFrame(twitters)
-        print(dataset_BBB23)
-        #return dataset_BBB23
-        
-        #dataset_BBB23.to_excel('dados_BBB23.xlsx')
+        return dataset_BBB23.drop(columns=['edit_history_tweet_ids'])
+  
+        dataset_BBB23.to_excel('dados_BBB23.xlsx')
             
     def tw_get_twitter_recents(self):
         self.client = tw.Client(self.bearer_token,self.consumer_key, self.consumer_secret, self.access_token, self.access_token_secret)
@@ -195,9 +199,10 @@ class Scrapper:
     def __init__(self, timeout: int = 5):
         self.timeout = timeout
         try:
-            opitions = webdriver.ChromeOptions()
-            opitions.add_argument('--headless')
-            self.driver = webdriver.Chrome(executable_path='./chromedriver.exe',options=opitions)
+            options = webdriver.ChromeOptions()
+            #options.add_argument('--headless')
+            options.add_argument("--disable-infobars")
+            self.driver = webdriver.Chrome(executable_path='./chromedriver.exe',options=options)
         except SessionNotCreatedException as ex:
             self.driver = None
             self.show_error(ex.msg)
@@ -208,7 +213,10 @@ class Scrapper:
         
         for username in usernames: 
             followers = {}
+            teste ='https://www.facebook.com/fred08oficial/'
+            url = f'https://www.instagram.com/{username}'
             self.driver.get(f'https://www.instagram.com/{username}/')
+            time.sleep(1)
             try:
                 splash_screen: WebElement = self.wait.until(
                     expected_conditions.presence_of_element_located((By.ID, "splash-screen"))
@@ -258,3 +266,36 @@ class Scrapper:
 
     def show_error(self, error: str):
         print(f'{bcolors.FAIL}{error}{bcolors.ENDC}')
+
+
+
+
+
+class AmazonAWS:
+    def __init__(self) -> None:
+        pass
+
+    def upload_file(file_name, bucket, object_name=None):
+        """Upload a file to an S3 bucket
+
+        :param file_name: File to upload
+        :param bucket: Bucket to upload to
+        :param object_name: S3 object name. If not specified then file_name is used
+        :return: True if file was uploaded, else False
+        """
+
+        # If S3 object_name was not specified, use file_name
+        if object_name is None:
+            object_name = os.path.basename(file_name)
+
+        # Upload the file
+        s3_client = boto3.client('s3')
+        try:
+            response = s3_client.upload_file(file_name, bucket, object_name)
+        except ClientError as e:
+            logging.error(e)
+            return False
+        return True   
+            
+
+    

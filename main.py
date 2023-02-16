@@ -24,6 +24,31 @@ participantes_twitter = [
 'mcguime']
 
 
+participantes_insta = [
+'paulafreitasr_',
+'cezar.black',
+'larisantosbe',
+'eitarickcamargo',
+'saa_aline',
+'brunornogueira',
+'tinacalamba',
+'alinewirley',
+'caradesapato',
+'brunagriphaoo',
+'domitila_barros',
+'fred',
+'frednicacio',
+'gbielsantana',
+'keyalves',
+'marvvila',
+'mcguime',
+'mariliamakeupoficial',
+'gustavo_benedetii',
+'vulgofop',
+'ameirelles',
+'rickcamargo',
+'cristianvanelli']
+
 '''
 for i in range(len(participantes_twitter)):
     print(participantes_twitter[i],':',ApiTwitter.quant_follower(participantes_twitter[i]))
@@ -32,11 +57,18 @@ for i in range(len(participantes_twitter)):
 #print(ApiTwitter.twitter_quotes(pd.read_excel('dados_BBB23.xlsx')))
 user = participantes_twitter #['italojcruz','fred_b12']
 username = ['fred']
-#followers_tw= scrapper.get_follower_twitter(user)
-#followers= scrapper.get_followers_insta(username)
-#print('Instagram: ',followers)
-#print('Twitter: ',followers_tw)
 
+#followers_tw= scrapper.get_follower_twitter(user)
+followers= scrapper.get_followers_insta(username)
+
+print('Instagram')
+print(followers)
+print('------------------------------------------')
+'''
+print('Twitter')
+print(followers_tw)
+print('------------------------------------------')
 dt  = apiTwitter.get_twitter_recents()
-#print(dt)
-#print(apiTwitter.twitter_quotes(dt))
+print(apiTwitter.twitter_quotes(dt))
+'''
+
