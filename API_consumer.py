@@ -19,11 +19,11 @@ import os
 
 class ApiTwitter():
     def __init__(self) -> None:
-        self.bearer_token        ='AAAAAAAAAAAAAAAAAAAAAJVblQEAAAAA8TqsBNhMkEPAcc0CDIGuUFEvhDU%3DP0BFUPVWhp3tf4OshAXQBGywj0J1e5XpTWnB4vS971qExhFNcl'
-        self.consumer_key        ='vx7SEtLVOCl2ARgg3CujiwZz0' 
-        self.consumer_secret     ='eK5718YwBRXu88aSzeI5C7IwApleQfXk9mzE8TiEZWclIjYLol' 
-        self.access_token        ='2936113828-n4E3eLCcjc8zcBEZ08aeYwKdxNYEP7E95ov50UO'
-        self.access_token_secret ='40xcsiz3D7sWudoqM3FITovMs4KID5yfBUvWsNLv7KI78'
+        self.bearer_token        =''
+        self.consumer_key        ='' 
+        self.consumer_secret     ='' 
+        self.access_token        =''
+        self.access_token_secret =''
                  
          
     def get_twitter_recents(self):
